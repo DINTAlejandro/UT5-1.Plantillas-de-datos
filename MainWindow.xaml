@@ -1,0 +1,111 @@
+﻿<Window x:Class="UT5_1.Plantillas_de_datos.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:UT5_1.Plantillas_de_datos"
+        xmlns:convertidores="clr-namespace:UT5_1.Plantillas_de_datos.Converters"
+        mc:Ignorable="d"
+        Title="Comida" MinHeight="450" MinWidth="550" Width="800" Height="600" Background="CadetBlue" Icon="Assets/fruit_food_apple.ico">
+    <Window.Resources>
+        <convertidores:GlutenConverter x:Key="conversorGluten"></convertidores:GlutenConverter>
+        <convertidores:TipoConverter x:Key="conversorTipo"></convertidores:TipoConverter>
+        <convertidores:SulfitosConverter x:Key="conversorSulfitos"></convertidores:SulfitosConverter>
+        <convertidores:SojaConverter x:Key="conversorSoja"></convertidores:SojaConverter>
+        <convertidores:LecheConverter x:Key="conversorLeche"></convertidores:LecheConverter>
+        <Style TargetType="StackPanel" x:Key="objNull">
+            <Style.Triggers >
+                <DataTrigger Binding="{Binding Path=PlatoActual}" Value="{x:Null}">
+                    <Setter Property="IsEnabled" Value="False"></Setter>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="Image" x:Key="toolTip">
+            <Style.Triggers >
+                <DataTrigger Binding="{Binding Path=Tipo}" Value="Americana">
+                    <Setter Property="ToolTip" Value="Comida americana"></Setter>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Path=Tipo}" Value="China">
+                    <Setter Property="ToolTip" Value="Comida china"></Setter>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Path=Tipo}" Value="Mexicana">
+                    <Setter Property="ToolTip" Value="Comida mexicana"></Setter>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="TextBlock" x:Key="fuente">
+            <Style.Triggers >
+                <DataTrigger Binding="{Binding Path=Tipo}" Value="Americana">
+                    <Setter Property="FontFamily" Value="Slim Summer"></Setter>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Path=Tipo}" Value="China">
+                    <Setter Property="FontFamily" Value="Chinese Wok Food St"></Setter>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Path=Tipo}" Value="Mexicana">
+                    <Setter Property="FontFamily" Value="Taco Salad"></Setter>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <DataTemplate  x:Key="plato">
+            <Border BorderBrush="Black" BorderThickness="2">
+                <Grid Width="200" Height="200">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="2*"></RowDefinition>
+                        <RowDefinition Height="8*"></RowDefinition>
+                        <RowDefinition Height="2*"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Viewbox Grid.Row="0">
+                        <TextBlock x:Name="tituloCard" Text="{Binding Path=Nombre}" Style="{StaticResource fuente}"></TextBlock>
+                    </Viewbox>
+                    <Image Stretch="UniformToFill" Grid.Row="1" Name="imageCard" Source="{Binding Path=Imagen}"></Image>
+                    <DockPanel Margin="5" Grid.Row="2" LastChildFill="False">
+                        <Image DockPanel.Dock="Left" x:Name="iconoPaisCard" Source="{Binding Converter={StaticResource conversorTipo}, Path=Tipo}" Style="{StaticResource toolTip}"></Image>
+                        <StackPanel DockPanel.Dock="Right" x:Name="listaIconosAlergenosCard" Orientation="Horizontal">
+                            <Image Source="{Binding Converter={StaticResource conversorLeche}, Path=Leche}"></Image>
+                            <Image Source="{Binding Converter={StaticResource conversorSulfitos}, Path=Sulfitos}"></Image>
+                            <Image Source="{Binding Converter={StaticResource conversorGluten}, Path=Gluten}"></Image>
+                            <Image Source="{Binding Converter={StaticResource conversorSoja}, Path=Soja}"></Image>
+                        </StackPanel>
+                    </DockPanel>
+                </Grid>
+            </Border>
+        </DataTemplate>
+    </Window.Resources>
+    
+    <DockPanel Margin="10" Background="White">
+        <StackPanel  Style="{StaticResource objNull}" x:Name="sp_opciones" Margin="10" Width="200" DockPanel.Dock="Right" Background="LightGray">
+            <TextBlock Margin="10,5">Nombre del título</TextBlock>
+            <TextBox Margin="10,5" Text="{Binding PlatoActual.Nombre, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+            <TextBlock Margin="10,5">Foto del plato</TextBlock>
+            <TextBox Margin="10,5" Text="{Binding PlatoActual.Imagen, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+            <TextBlock Margin="10,5">Tipo de comida</TextBlock>
+            <ComboBox Margin="10,5" SelectedItem="{Binding PlatoActual.Tipo}" ItemsSource="{Binding TipoPlatos}">
+                
+            </ComboBox>
+            <GroupBox Header="Alérgenos" Margin="10,5">
+                <StackPanel Orientation="Horizontal" Margin="10,5">
+                    <StackPanel Orientation="Vertical">
+                        <CheckBox Margin="5" IsChecked="{Binding PlatoActual.Leche, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">Leche</CheckBox>
+                        <CheckBox Margin="5" IsChecked="{Binding PlatoActual.Soja, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">Soja</CheckBox>
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical">
+                        <CheckBox Margin="5" IsChecked="{Binding PlatoActual.Gluten, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">Gluten</CheckBox>
+                        <CheckBox Margin="5" IsChecked="{Binding PlatoActual.Sulfitos, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">Sulfitos</CheckBox>
+                    </StackPanel>
+                </StackPanel>
+            </GroupBox>
+
+            <Button x:Name="button_limpiarSeleccion" HorizontalAlignment="Left" Width="100" Height="20" Margin="10,5" Click="button_limpiarSeleccion_Click"> Limpiar selección</Button>
+        </StackPanel>
+        <ListBox MinWidth="200"  SelectedItem="{Binding Path=PlatoActual}"  Margin="10" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Visible"  ItemTemplate="{StaticResource plato}" ItemsSource="{Binding Path=Platos}">
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel>
+                        
+                    </WrapPanel>
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+        </ListBox>
+    </DockPanel>
+</Window>
